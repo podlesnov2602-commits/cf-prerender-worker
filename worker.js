@@ -31,7 +31,7 @@ export default {
       console.log(">>> PRERENDER MODE <<<");
 
       return fetch(
-        "http://34.60.197.31:3000/render?url=" +
+        "https://prerender.fk-alatau.kz/render?url=" +
           encodeURIComponent(request.url),
         {
           headers: {
