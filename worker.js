@@ -1,33 +1,28 @@
 export default {
-  async fetch(request, env, ctx) {
-    const ua = request.headers.get("user-agent") || "NO-UA";
+  async fetch(request) {
+    const ua = request.headers.get("user-agent") || "";
+    const accept = request.headers.get("accept") || "";
 
-    // ===== ЛОГИ ДЛЯ ОТЛАДКИ =====
-    console.log("========== NEW REQUEST ==========");
-    console.log("URL:", request.url);
-    console.log("USER-AGENT:", ua);
+    const isBrowser =
+      /Chrome|Firefox|Safari|Edg/i.test(ua) &&
+      !/bot|crawler|spider|curl|wget|node|python/i.test(ua);
 
-    // ===== ДЕТЕКТ УСТРОЙСТВ =====
-    const needsPrerender =
-      /Tizen|SamsungBrowser|SmartTV|SMART-TV|HbbTV|NetCast|WebOS|Presto/i.test(ua);
+    const wantsHTML = accept.includes("text/html");
+
+    const needsPrerender = !isBrowser && wantsHTML;
+
+    console.log("UA:", ua);
+    console.log("isBrowser:", isBrowser);
+    console.log("needsPrerender:", needsPrerender);
 
     if (needsPrerender) {
-      console.log(">>> PRERENDER MODE <<<");
-
-      const prerenderURL =
+      return fetch(
         "http://34.60.197.31:3000/render?url=" +
-        encodeURIComponent(request.url);
-
-      return fetch(prerenderURL, {
-        headers: {
-          "User-Agent": ua
-        }
-      });
+          encodeURIComponent(request.url),
+        { headers: { "User-Agent": ua } }
+      );
     }
 
-    console.log(">>> NORMAL MODE <<<");
-
-    // Обычные браузеры — напрямую
     return fetch(request);
   }
 };
