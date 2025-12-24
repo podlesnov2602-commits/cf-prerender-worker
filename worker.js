@@ -30,9 +30,16 @@ export default {
     if (needsPrerender) {
       console.log(">>> PRERENDER MODE <<<");
 
+      // 🔥 КЛЮЧЕВОЙ МОМЕНТ:
+      // Меняем fk-alatau.kz → origin.fk-alatau.kz
+      const originUrl = request.url.replace(
+        "https://fk-alatau.kz",
+        "https://origin.fk-alatau.kz"
+      );
+
       return fetch(
         "https://prerender.fk-alatau.kz/render?url=" +
-          encodeURIComponent(request.url),
+          encodeURIComponent(originUrl),
         {
           headers: {
             "User-Agent": ua
